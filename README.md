@@ -62,7 +62,7 @@ resp = rev.video.upload("/path/to/local/video.mp4", {
 	"isActive": True
 	# ...any additional metadata
 })
-video_id = resp.videoId
+video_id = resp["videoId"]
 print('Video uploaded! ' + video_id)
 
 rev.disconnect()
