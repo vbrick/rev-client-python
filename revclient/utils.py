@@ -8,11 +8,11 @@ if TYPE_CHECKING:
 MAX_INT = (2**31 - 1)
 
 #%%
-iso_re = re.compile('([\d:T-]+\.\d\d\d)\d*(\+\d+:\d+|Z)?')
+iso_re = re.compile('([\d:T-]+)(\.\d+)?(\+\d+:\d+|Z)?')
 
 def parse_iso(val):
     cleaned = iso_re.match(val)
-    return datetime.fromisoformat((cleaned[1] + '+00:00') if cleaned else val)
+    return datetime.fromisoformat((cleaned[1] + '.000+00:00') if cleaned else val)
 
 def format_iso(val):
     return val.isoformat(timespec='milliseconds').replace('+00:00', 'Z')

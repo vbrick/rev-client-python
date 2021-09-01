@@ -118,7 +118,8 @@ class RevClient():
         
         if not files and 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'
-        elif headers['Content-Type'] == None:
+        # special case to explicitly NOT include Content-Type header in request
+        elif not bool(headers.get('Content-Type', True)):
             del headers['Content-Type']
         
         # add token if not already specified
@@ -182,7 +183,7 @@ class RevClient():
     def delete(self, endpoint='', payload=None, options={}, **kwargs):
         return self.request('DELETE', endpoint, payload, options, **kwargs)
     
-    def login(self):
+    def connect(self):
         # make sure the authorization header isn't added
         self.session.clear()
 
@@ -208,7 +209,7 @@ class RevClient():
                     continue
                 else:
                     raise
-    def logoff(self):
+    def disconnect(self):
         req_args = self.session.logoff_request()
 
         try:
@@ -230,7 +231,7 @@ class RevClient():
         return response.ok
 
     # extends / does a login only if necessary
-    def lazy_extend_session(self, refresh_threshold_minutes = 3):
+    def lazy_extend_session(self, refresh_threshold_minutes = 3, verify = True):
         time_till_expires = self.session.seconds_till_expires
 
         do_login = False
@@ -245,12 +246,12 @@ class RevClient():
                 # TODO log error correctly
                 print(f'Error extending session - re-logging in {err}')
                 do_login = True
-        else:
+        elif verify:
             # need to login if verify fails
             do_login = not self.verify_session()
 
         if do_login:
-            self.login()
+            self.connect()
             did_refresh = True
         return did_refresh
     

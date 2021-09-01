@@ -1,10 +1,9 @@
 # %%
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/../revclient")
-# %%
+
 import requests
-from revclient.lib.client import RevClient
+from revclient import RevClient
 # %%
 # client config values - get from environment variables
 url = os.getenv('REV_URL', 'https://my.rev.url')
@@ -13,26 +12,33 @@ password = os.getenv('REV_PASSWORD', '')
 apiKey = os.getenv('REV_APIKEY', '')
 secret = os.getenv('REV_SECRET', '')
 
-# upload video config
-# REQUIRED - change me!
-filename = "/path/to/video.mp4"
+# upload video config - get from environment variables
+filename = os.getenv('UPLOAD_FILE', "/path/to/video.mp4")
 video_metadata = {
-	# REQUIRED - change me!
-	'uploader': 'uploader.username',
-	'title': 'new video'
+	'uploader': os.getenv('UPLOAD_USER', username),
+	'title': os.getenv('UPLOAD_TITLE', 'new video')
 }
 
-client = RevClient(url, username = username, password = password, apiKey=apiKey, secret=secret)
-client.login()
+rev = RevClient(url, username = username, password = password, apiKey=apiKey, secret=secret)
+rev.connect()
+print('logged in. Session expires: ' + str(rev.session.expires))
 
-with open(filename, "rb") as f:
+# %%
+
+result = {}
+
+with open(filename, "rb") as file:
 	try:
-		resp = client.video.upload(f, video_metadata)
-		print(resp)
-	except Exception as e:
+		resp = rev.video.upload(file, video_metadata)
+		result['resp'] = resp
+		print('Upload Complete - video id = ' + resp)
+	except Exception as err:
 		print('failed')
-		print(e)
+		print(err)
+		result['err'] = err
 
-client.logoff()
+# %%
+
+rev.disconnect()
 print('done!')
 # %%
