@@ -133,3 +133,9 @@ Collection of helpers for Video API endpoints
 #### `video.upload_transcription(video_id: str, file, language: str = 'en', filename: str = 'subtitle.srt', content_type: str = 'application/x-subrip') -> None`
 #### `video.search_stream(query: dict = {}, max_results = None, on_page = None) -> Generator`
 #### `video.search(query: dict = {}, max_results = None, on_page = None) -> [Dict]`
+
+
+---
+
+## Disclaimer
+This code is distributed "as is", with no warranty expressed or implied, and no guarantee for accuracy or applicability to your purpose.
